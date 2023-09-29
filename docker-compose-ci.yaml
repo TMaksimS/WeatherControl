@@ -1,0 +1,63 @@
+version: "v2.21.0"
+services:
+  db:
+    container_name: db
+    image: postgres:15.3-alpine3.17
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_HOST=${DB_HOST}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: sh -c "pg_isready -U postgres -h localhost"
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    networks:
+      - custom
+    volumes:
+      - ./docker_volumes:/var/lib/postgresql15.3/data
+  app:
+    container_name: app
+    image: myapp
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      REAL_DATABASE_URL: postgresql+asyncpg://${DB_USER}:%{DB_PASS}@%{DB_HOST}:%{DB_PORT}/${DB_NAME}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sh -c "alembic upgrade head && python3 main.py"
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: sh -c "curl http://app:8000"
+      interval: 5s
+      timeout: 5s
+      retries: 6
+    networks:
+      - custom
+  client:
+    container_name: updater
+    image: myapp
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      APP_URL: http://app:8000
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    command: sh -c "python3 updater.py"
+    networks:
+      - custom
+networks:
+  custom:
+    driver: bridge

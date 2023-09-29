@@ -7,7 +7,7 @@ from settings import APP_HOST, APP_RELOAD, APP_PORT, LOGER, COUNT_CITIES
 app = FastAPI(
     title="GKU app",
     description=f"Коллектор для отслеживания погодных условий "
-                f"в {COUNT_CITIES}",
+                f"в {COUNT_CITIES} городах",
     version="0.1",
     contact={
         "name": "Tarkin Maksim",

@@ -5,13 +5,18 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 from settings import REAL_DATABASE_URL
 
-engine = create_async_engine(REAL_DATABASE_URL, echo=True)
+engine = create_async_engine(
+    REAL_DATABASE_URL,
+    echo=False
+)
 
 async_session_maker = sessionmaker(
     engine,
     expire_on_commit=False,
     class_=AsyncSession
 )
+
+local_session = AsyncSession(engine)
 
 
 class Base(DeclarativeBase):

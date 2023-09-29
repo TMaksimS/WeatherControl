@@ -15,10 +15,19 @@ class City(Base):
     country: Mapped[str] = mapped_column(
         String(5), nullable=True, name="Абривиатура страны"
     )
+    lat: Mapped[float] = mapped_column(
+        Float(),
+        nullable=False,
+        name="Широта"
+    )
+    lon: Mapped[float] = mapped_column(
+        Float(),
+        nullable=False,
+        name="Долгота"
+    )
     city_weather: Mapped["Weather"] = relationship(
         uselist=False,
         back_populates="city",
-        # sa_relationship_kwargs={'lazy': 'joined'},
         lazy=False
     )
 
@@ -28,8 +37,17 @@ class Weather(Base):
     id: Mapped[int] = mapped_column(
         Integer, primary_key=True,
     )
+    type: Mapped[str] = mapped_column(
+        String(100), nullable=False, name="Тип погоды"
+    )
     temp: Mapped[float] = mapped_column(
         Float(), nullable=False, name="Температура в *C"
+    )
+    feels_like: Mapped[float] = mapped_column(
+        Float(), nullable=False, name="Ощущается как"
+    )
+    wind_speed: Mapped[float] = mapped_column(
+        Float(), nullable=False, name="Скорость ветра"
     )
     description: Mapped[str] = mapped_column(
         String(225), nullable=True, name="Описание погоды"
