@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 
 from src.api import app as app_router
 from settings import APP_HOST, APP_RELOAD, APP_PORT, LOGER, COUNT_CITIES
@@ -17,6 +17,11 @@ app = FastAPI(
 app.include_router(
     router=app_router
 )
+
+
+@app.get("/")
+async def curl():
+    return Response(content="OK", status_code=200)
 
 
 @LOGER.catch

@@ -1,5 +1,7 @@
 import asyncio
 
+import httpx
+
 from src.database import local_session
 from src.database.schemas import AddWeather
 from src.database.crud import CityDB
@@ -23,7 +25,7 @@ async def get_weather(city_id: int):
         data = await connect.get_current_city(city_id=city_id)
         await session.close()
     request = Collector()
-    return request.get_weather_by_coord(lon=data.lon, lat=data.lat)
+    return await request.get_weather_by_coord(lon=data.lon, lat=data.lat)
 
 
 async def update(city_id: int, data: AddWeather):
@@ -42,15 +44,14 @@ async def main(time: int):
     collector = Collector()
     while True:
         LOGER.info("START UPDATING CITIES")
-        await asyncio.sleep(delay=time)
+        await asyncio.sleep(delay=5)
         cities = await watcher()
         for city in cities:
             LOGER.info(f"{city}")
             data = await get_weather(city_id=city)
             await update(city_id=city, data=collector.parser(data=data, city_id=city))
-
+            await asyncio.sleep(delay=1.5)
 
 
 if __name__ == "__main__":
     asyncio.run(main=main(TIME_REFRESH))
-

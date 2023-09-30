@@ -1,5 +1,4 @@
-import typing
-import requests
+import httpx
 
 from settings import TOKEN, URL
 from src.database.schemas import AddWeather
@@ -10,12 +9,40 @@ class Collector:
         self.url = URL
         self.token = TOKEN
 
-    def get_weather_by_city(self, city: str) -> typing.Any:
-        data = requests.get(url=f"{self.url}?q={city}&appid={self.token}&units=metric")
+    async def get_weather_by_city(self, city: str):
+        session = httpx.Client(timeout=10)
+        try:
+            data = session.get(
+                url=f"{self.url}"
+                    f"?q={city}&"
+                    f"appid={self.token}"
+                    f"&units=metric"
+            )
+        except httpx.ReadTimeout:
+            data = session.get(
+                url=f"{self.url}"
+                    f"?q={city}"
+                    f"&appid={self.token}"
+                    f"&units=metric"
+            )
         return data.json()
 
-    def get_weather_by_coord(self, lon: float, lat: float) -> typing.Any:
-        data = requests.get(url=f"{self.url}?lat={lat}&lon={lon}&appid={self.token}&units=metric")
+    async def get_weather_by_coord(self, lon: float, lat: float):
+        session = httpx.Client(timeout=10)
+        try:
+            data = session.get(
+                url=f"{self.url}"
+                    f"?lat={lat}&lon={lon}&"
+                    f"appid={self.token}"
+                    f"&units=metric"
+            )
+        except httpx.ReadTimeout:
+            data = session.get(
+                url=f"{self.url}"
+                    f"?lat={lat}&lon={lon}&"
+                    f"appid={self.token}"
+                    f"&units=metric"
+            )
         return data.json()
 
     @staticmethod

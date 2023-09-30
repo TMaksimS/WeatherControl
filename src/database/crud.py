@@ -15,7 +15,7 @@ class CityDB:
         self.session.add(data)
         await self.session.flush()
         collector = Collector()
-        weather_data = collector.get_weather_by_coord(
+        weather_data = await collector.get_weather_by_coord(
             lon=data.lon,
             lat=data.lat
         )

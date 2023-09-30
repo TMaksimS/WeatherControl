@@ -44,7 +44,7 @@ async def get_weather_by_city(city: str):
     возвращает ответ от сервера, Стоит учитывать что неккоректные запросы
      могут привести к зависанию приложения."""
     req = Collector()
-    data = req.get_weather_by_city(city=city)
+    data = await req.get_weather_by_city(city=city)
     return data
 
 
