@@ -20,6 +20,7 @@ URL = env.str("URL", default="http://api.openweathermap.org/data/2.5/weather")
 APP_PORT = env.int("APP_PORT", default=8000)
 APP_HOST = env.str("APP_HOST", default="0.0.0.0")
 APP_RELOAD = env.bool("APP_RELOAD", default=True)
+COUNT_CITIES = env.int("COUNT_CITIES", default=50)
 TIME_REFRESH = env.int("TIME_REFRESH", default=60)
 REAL_DATABASE_URL = env.str(
     "REAL_DATABASE_URL",
