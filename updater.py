@@ -1,7 +1,5 @@
 import asyncio
 
-import httpx
-
 from src.database import local_session
 from src.database.schemas import AddWeather
 from src.database.crud import CityDB
@@ -43,14 +41,17 @@ async def main(time: int):
     """Мэйн корутина для запуска пстоянных обновлений городов из БД"""
     collector = Collector()
     while True:
+        await asyncio.sleep(delay=time * 60)
         LOGER.info("START UPDATING CITIES")
-        await asyncio.sleep(delay=5)
         cities = await watcher()
         for city in cities:
-            LOGER.info(f"{city}")
+            LOGER.info(f"City {city} has been updated")
             data = await get_weather(city_id=city)
-            await update(city_id=city, data=collector.parser(data=data, city_id=city))
-            await asyncio.sleep(delay=1.5)
+            await update(
+                city_id=city,
+                data=collector.parser(data=data, city_id=city)
+            )
+            await asyncio.sleep(delay=3)
 
 
 if __name__ == "__main__":

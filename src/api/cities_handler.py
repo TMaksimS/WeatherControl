@@ -7,7 +7,7 @@ from src.database import get_db
 from src.database.crud import CityDB
 from settings import LOGER
 from src.database.schemas import CreateData, GetAllInfo, GetAllData
-from src.collector import Collector
+
 
 app = APIRouter(prefix="/cities", tags=["cities"])
 
@@ -35,17 +35,6 @@ async def add_city(body: CreateData, session: AsyncSession = Depends(get_db)):
     data = CityDB(session=session)
     result = await data.add_city(body)
     return GetAllInfo.model_validate(result)
-
-
-@app.post("/weather_{city}")
-@LOGER.catch
-async def get_weather_by_city(city: str):
-    """Эндпоинт напрямую обращается к openweathermap.org и
-    возвращает ответ от сервера, Стоит учитывать что неккоректные запросы
-     могут привести к зависанию приложения."""
-    req = Collector()
-    data = await req.get_weather_by_city(city=city)
-    return data
 
 
 @app.get("/{city_id}")

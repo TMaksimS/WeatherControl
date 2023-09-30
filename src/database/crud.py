@@ -11,14 +11,15 @@ class CityDB:
         self.session = session
 
     async def add_city(self, city_data: CreateData):
-        data = City(**city_data.model_dump())
-        self.session.add(data)
-        await self.session.flush()
         collector = Collector()
+
+        data = City(**city_data.model_dump())
         weather_data = await collector.get_weather_by_coord(
             lon=data.lon,
             lat=data.lat
         )
+        self.session.add(data)
+        await self.session.flush()
         data.city_weather = Weather(
             **collector.parser(
                 data=weather_data,

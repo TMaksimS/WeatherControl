@@ -3,6 +3,8 @@ import httpx
 from settings import TOKEN, URL
 from src.database.schemas import AddWeather
 
+client_set = httpx.Limits(max_connections=15, max_keepalive_connections=2)
+
 
 class Collector:
     def __init__(self):
@@ -10,7 +12,10 @@ class Collector:
         self.token = TOKEN
 
     async def get_weather_by_city(self, city: str):
-        session = httpx.Client(timeout=10)
+        session = httpx.Client(
+            timeout=3,
+            limits=client_set
+        )
         try:
             data = session.get(
                 url=f"{self.url}"
@@ -25,10 +30,20 @@ class Collector:
                     f"&appid={self.token}"
                     f"&units=metric"
             )
+        except httpx.TimeoutException:
+            data = session.get(
+                url=f"{self.url}"
+                    f"?q={city}"
+                    f"&appid={self.token}"
+                    f"&units=metric"
+            )
         return data.json()
 
     async def get_weather_by_coord(self, lon: float, lat: float):
-        session = httpx.Client(timeout=10)
+        session = httpx.Client(
+            timeout=3,
+            limits=client_set
+        )
         try:
             data = session.get(
                 url=f"{self.url}"
@@ -37,6 +52,13 @@ class Collector:
                     f"&units=metric"
             )
         except httpx.ReadTimeout:
+            data = session.get(
+                url=f"{self.url}"
+                    f"?lat={lat}&lon={lon}&"
+                    f"appid={self.token}"
+                    f"&units=metric"
+            )
+        except httpx.TimeoutException:
             data = session.get(
                 url=f"{self.url}"
                     f"?lat={lat}&lon={lon}&"

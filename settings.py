@@ -16,18 +16,12 @@ DB_PASS = env.str("DB_PASS", default="postgres_test")
 DB_NAME = env.str("DB_NAME", default="postgres_test")
 DB_HOST = env.str("DB_HOST", default="localhost")
 TOKEN = env.str("TOKEN", default=None)
-URL = env.str("URL", default="https://api.openweathermap.org/data/2.5/weather")
+URL = env.str("URL", default="http://api.openweathermap.org/data/2.5/weather")
 APP_PORT = env.int("APP_PORT", default=8000)
 APP_HOST = env.str("APP_HOST", default="0.0.0.0")
 APP_RELOAD = env.bool("APP_RELOAD", default=True)
 TIME_REFRESH = env.int("TIME_REFRESH", default=60)
-COUNT_CITIES = env.int("COUNT_CITIES", default=50)
-# REAL_URL_DB = env.str("REAL_DATABASE_URL")
-#
-#
 REAL_DATABASE_URL = env.str(
     "REAL_DATABASE_URL",
     default=f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:5432/{DB_NAME}"
 )
-
-
